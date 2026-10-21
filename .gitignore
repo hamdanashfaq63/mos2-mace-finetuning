@@ -3,5 +3,4 @@ results/checkpoints/
 __pycache__/
 *.pt
 models/*_compiled.model
-results/train_logs/*_train.txt
-results/train_logs/*_debug.log
+results/train_logs/
