@@ -105,20 +105,29 @@ for ax, name in zip(axes, main):
 fig.tight_layout()
 fig.savefig("results/force_parity.png", dpi=200, bbox_inches="tight")
 
-# learning curve
+# learning curve: test set (left) and unseen S-vacancy set (right)
 n = [20, 40, 80]
-plt.figure(figsize=(5.2, 4))
-plt.plot(n, [metrics[f"Fine-tuned ({k})"]["test_force_MAE_meV_per_A"] for k in n], "o-", label="Fine-tuned MACE-MP-0")
-plt.plot(n, [metrics[f"From scratch ({k})"]["test_force_MAE_meV_per_A"] for k in n], "s-", label="Trained from scratch")
-plt.axhline(metrics["MACE-MP-0 zero-shot"]["test_force_MAE_meV_per_A"], color="0.5", ls="--", label="MACE-MP-0 zero-shot")
-plt.yscale("log")
-plt.xticks(n)
-plt.xlabel("Training structures")
-plt.ylabel("Test force MAE (meV/Å, log scale)")
-plt.title("Learning curve")
-plt.legend()
-plt.tight_layout()
-plt.savefig("results/learning_curve.png", dpi=200, bbox_inches="tight")
+zero = metrics["MACE-MP-0 zero-shot"]
+fig, axes = plt.subplots(1, 2, figsize=(10, 4))
+for ax, key, title in zip(axes, ["test_force_MAE_meV_per_A", "vacancy_force_MAE_meV_per_A"],
+                          ["Test set (like the training data)", "S-vacancy set (never seen in training)"]):
+    for label, marker in [("Fine-tuned", "o"), ("From scratch", "s")]:
+        y = [metrics[f"{label} ({k})"][key] for k in n]
+        ax.plot(n, y, marker=marker, label=f"{label} MACE" if label == "From scratch" else "Fine-tuned MACE-MP-0")
+        below = label == "Fine-tuned"                  # fine-tuned labels below the points, scratch above
+        fmt = "{:.1f}" if key.startswith("test") else "{:.0f}"
+        for x, v in zip(n, y):
+            ax.annotate(fmt.format(v), (x, v), textcoords="offset points", xytext=(0, -13 if below else 7),
+                        ha="center", fontsize=8)
+    ax.set(xticks=n, xlabel="Training structures", ylabel="Force MAE (meV/Å)", title=title)
+    ax.set_ylim(bottom=0)
+axes[0].text(0.97, 0.95, f"MACE-MP-0 with no fine-tuning: {zero['test_force_MAE_meV_per_A']:.0f} meV/Å (off scale)",
+             transform=axes[0].transAxes, ha="right", va="top", fontsize=8, color="0.35")
+axes[1].axhline(zero["vacancy_force_MAE_meV_per_A"], color="0.5", ls="--", label="MACE-MP-0, no fine-tuning")
+axes[0].legend(loc="lower left")
+axes[1].legend(loc="lower left")
+fig.tight_layout()
+fig.savefig("results/learning_curve.png", dpi=200, bbox_inches="tight")
 
 # vacancy test
 names = list(models)

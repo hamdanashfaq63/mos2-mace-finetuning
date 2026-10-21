@@ -57,6 +57,8 @@ For scale, the average size of a DFT force component in the test data is 0.74 eV
 
 ![Learning curve](results/learning_curve.png)
 
+*Force error against the number of training structures. Left: the 20 test structures, which look like the training data. Right: the 12 sulfur-vacancy structures, which no model here was trained on.*
+
 What the numbers say:
 
 * **The foundation model is a starting point, not a final model, for MoS₂.** Its forces have the right direction but are about 25% too small on average (a least-squares fit gives a slope of 0.74 against DFT). This is the systematic softening seen across universal MLIPs, and fine-tuning removes it.
