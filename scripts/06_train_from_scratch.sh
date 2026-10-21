@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 # Baseline: same architecture as MACE-MP-0 small, trained from random weights.
-# Usage: scripts/06_train_from_scratch.sh [model name] [training file]
+# Usage: scripts/06_train_from_scratch.sh [model name] [training file] [seed]
 set -e
 NAME=${1:-mos2_from_scratch}
 TRAIN=${2:-data/train.xyz}
+SEED=${3:-1}
 mace_run_train \
   --name "$NAME" \
   --model MACE \
@@ -25,7 +26,7 @@ mace_run_train \
   --ema --ema_decay 0.99 \
   --default_dtype float64 \
   --device cpu \
-  --seed 1 \
+  --seed "$SEED" \
   --model_dir models \
   --log_dir results/train_logs \
   --checkpoints_dir results/checkpoints \

@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 # Fine-tune MACE-MP-0 small on the MoS2 DFT data.
-# Usage: scripts/05_finetune.sh [model name] [training file]
+# Usage: scripts/05_finetune.sh [model name] [training file] [seed]
 set -e
 NAME=${1:-mos2_finetuned}
 TRAIN=${2:-data/train.xyz}
+SEED=${3:-1}
 mace_run_train \
   --name "$NAME" \
   --foundation_model small \
@@ -22,7 +23,7 @@ mace_run_train \
   --ema --ema_decay 0.99 \
   --default_dtype float64 \
   --device cpu \
-  --seed 1 \
+  --seed "$SEED" \
   --model_dir models \
   --log_dir results/train_logs \
   --checkpoints_dir results/checkpoints \

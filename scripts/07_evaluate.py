@@ -1,8 +1,8 @@
 """Evaluate all models on held-out DFT data and make the figures.
 
-Test set: 20 pristine structures (energies and forces). Vacancy set: 12 cells
-with a sulfur vacancy (forces only, since their composition differs). Strain
-series: 9 unrelaxed strained cells.
+Test set: the held-out 600 K MD run and 10 rattled cells (energies and forces).
+Vacancy set: 12 cells with a sulfur vacancy (forces only, since their
+composition differs). Strain series: 9 unrelaxed strained cells.
 
 GPAW and MACE-MP-0 use different energy zero points, so each model's energies
 are shifted by one constant per atom fitted on the training set.
@@ -24,11 +24,15 @@ models = {
     "MACE-MP-0 zero-shot": mace_mp(model="small", default_dtype="float64", device="cpu"),
     "From scratch (20)": load("models/mos2_from_scratch_20.model"),
     "From scratch (40)": load("models/mos2_from_scratch_40.model"),
-    "From scratch (80)": load("models/mos2_from_scratch.model"),
+    "From scratch (70)": load("models/mos2_from_scratch.model"),
+    "From scratch (70) seed 2": load("models/mos2_from_scratch_seed2.model"),
+    "From scratch (70) seed 3": load("models/mos2_from_scratch_seed3.model"),
     "Fine-tuned (20)": load("models/mos2_finetuned_20.model"),
     "Fine-tuned (40)": load("models/mos2_finetuned_40.model"),
-    "Fine-tuned (80)": load("models/mos2_finetuned.model"),
-    "Fine-tuned (80) + 26 vacancy": load("models/mos2_finetuned_vacancy.model"),
+    "Fine-tuned (70)": load("models/mos2_finetuned.model"),
+    "Fine-tuned (70) seed 2": load("models/mos2_finetuned_seed2.model"),
+    "Fine-tuned (70) seed 3": load("models/mos2_finetuned_seed3.model"),
+    "Fine-tuned (70) + 26 vacancy": load("models/mos2_finetuned_vacancy.model"),
 }
 
 
@@ -81,10 +85,16 @@ for name, calc in models.items():
     preds[name] = (f_pred, e_eos_pred)
     print(name, json.dumps(metrics[name]), flush=True)
 
+# mean and standard deviation over the three seeds at 70 structures
+for label in ("From scratch", "Fine-tuned"):
+    runs = [metrics[f"{label} (70)"]] + [metrics[f"{label} (70) seed {k}"] for k in (2, 3)]
+    metrics[f"{label} (70), 3 seeds"] = {key: {"mean": float(np.mean([r[key] for r in runs])),
+                                               "std": float(np.std([r[key] for r in runs]))} for key in runs[0]}
+
 json.dump(metrics, open("results/metrics.json", "w"), indent=2)
 
 # force parity for the three main models, plus the distribution of their errors
-main = ["MACE-MP-0 zero-shot", "From scratch (80)", "Fine-tuned (80)"]
+main = ["MACE-MP-0 zero-shot", "From scratch (70)", "Fine-tuned (70)"]
 fig, axes = plt.subplots(1, 4, figsize=(17, 4.4))
 lim = 1.05 * np.abs(f_test).max()
 for ax, name in zip(axes, main):
@@ -102,14 +112,16 @@ fig.tight_layout()
 fig.savefig("results/force_parity.png", dpi=200, bbox_inches="tight")
 
 # learning curve: test set (left) and unseen S-vacancy set (right)
-n = [20, 40, 80]
+n = [20, 40, 70]
 zero = metrics["MACE-MP-0 zero-shot"]
 fig, axes = plt.subplots(1, 2, figsize=(10, 4))
 for ax, key, title in zip(axes, ["test_force_MAE_meV_per_A", "vacancy_force_MAE_meV_per_A"],
-                          ["Test set (like the training data)", "S-vacancy set (never seen in training)"]):
+                          ["Pristine test set (held-out 600 K run + rattled)", "S-vacancy test set"]):
     for label, marker in [("Fine-tuned", "o"), ("From scratch", "s")]:
-        y = [metrics[f"{label} ({k})"][key] for k in n]
-        ax.plot(n, y, marker=marker, label=f"{label} MACE" if label == "From scratch" else "Fine-tuned MACE-MP-0")
+        y = [metrics[f"{label} ({k})"][key] for k in n[:2]] + [metrics[f"{label} (70), 3 seeds"][key]["mean"]]
+        err = [0, 0, metrics[f"{label} (70), 3 seeds"][key]["std"]]
+        ax.errorbar(n, y, yerr=err, marker=marker, capsize=4,
+                    label=f"{label} MACE" if label == "From scratch" else "Fine-tuned MACE-MP-0")
         below = label == "Fine-tuned"                  # fine-tuned labels below the points, scratch above
         fmt = "{:.1f}" if key.startswith("test") else "{:.0f}"
         for x, v in zip(n, y):
