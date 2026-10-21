@@ -1,9 +1,8 @@
-"""Build monolayer MoS2 configurations to label with DFT.
+"""Build the 119 MoS2 structures (2x2 supercells, 12 atoms) to label with DFT.
 
-Three kinds of structures, all 2x2 supercells (12 atoms):
-  strain  - unrattled cells under biaxial strain from -4% to +4% (held out as an equation-of-state test)
-  rattle  - random strain (+-3%) plus random atomic displacements
-  md      - snapshots from short molecular dynamics runs with the MACE-MP-0 foundation model at 300, 600 and 900 K
+strain: biaxial strain from -4% to +4%, held out as a test
+rattle: random strain (up to 3%) and random atomic displacements
+md:     snapshots from MACE-MP-0 molecular dynamics at 300, 600 and 900 K
 """
 import numpy as np
 from ase.build import mx2

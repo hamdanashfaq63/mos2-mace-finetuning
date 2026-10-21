@@ -1,20 +1,11 @@
-"""Evaluate every model against held-out DFT data.
+"""Evaluate all models on held-out DFT data and make the figures.
 
-Models: the MACE-MP-0 foundation model with no extra training (zero-shot),
-MACE trained from scratch and MACE-MP-0 fine-tuned (each on 20, 40 and 80 structures),
-and MACE-MP-0 fine-tuned on the 80 structures plus 26 sulfur-vacancy structures.
+Test set: 20 pristine structures (energies and forces). Vacancy set: 12 cells
+with a sulfur vacancy (forces only, since their composition differs). Strain
+series: 9 unrelaxed strained cells.
 
-Tests:
-  test set        - 20 held-out structures like the training data (energies and forces)
-  S-vacancy set   - 12 structures with a sulfur vacancy (forces only). Only the last
-                    model saw vacancies in training, and never these 12.
-  strain series   - 9 unrattled strained cells, used to predict the lattice constant
-
-Energy reference: DFT codes measure energy from different zero points, so each
-model's energies are shifted by one constant per atom, fitted on the training
-set. Every structure in the train and test sets has the same composition (Mo4S8),
-so one constant is enough. The vacancy cells have a different composition, so
-only their forces are compared.
+GPAW and MACE-MP-0 use different energy zero points, so each model's energies
+are shifted by one constant per atom fitted on the training set.
 """
 import json
 import numpy as np
@@ -92,9 +83,9 @@ for name, calc in models.items():
 
 json.dump(metrics, open("results/metrics.json", "w"), indent=2)
 
-# force parity plots for the three main models
+# force parity for the three main models, plus the distribution of their errors
 main = ["MACE-MP-0 zero-shot", "From scratch (80)", "Fine-tuned (80)"]
-fig, axes = plt.subplots(1, 3, figsize=(13, 4.4))
+fig, axes = plt.subplots(1, 4, figsize=(17, 4.4))
 lim = 1.05 * np.abs(f_test).max()
 for ax, name in zip(axes, main):
     ax.scatter(f_test.ravel(), preds[name][0].ravel(), s=5, alpha=0.4)
@@ -102,6 +93,11 @@ for ax, name in zip(axes, main):
     ax.set(xlim=(-lim, lim), ylim=(-lim, lim), xlabel="DFT force (eV/Å)", ylabel="Model force (eV/Å)",
            title=f"{name}\nforce MAE = {metrics[name]['test_force_MAE_meV_per_A']:.0f} meV/Å")
     ax.set_aspect("equal")
+bins = np.logspace(-1, 3.5, 30)
+for name in main:
+    axes[3].hist(1000 * np.abs(preds[name][0] - f_test).ravel(), bins=bins, histtype="step", lw=1.5, label=name)
+axes[3].set(xscale="log", xlabel="|Force error| (meV/Å)", ylabel="Force components", title="Error distribution")
+axes[3].legend(fontsize=8)
 fig.tight_layout()
 fig.savefig("results/force_parity.png", dpi=200, bbox_inches="tight")
 
@@ -128,16 +124,6 @@ axes[0].legend(loc="lower left")
 axes[1].legend(loc="lower left")
 fig.tight_layout()
 fig.savefig("results/learning_curve.png", dpi=200, bbox_inches="tight")
-
-# vacancy test
-names = list(models)
-plt.figure(figsize=(6.4, 4))
-plt.barh(names, [metrics[k]["vacancy_force_MAE_meV_per_A"] for k in names])
-plt.gca().invert_yaxis()
-plt.xlabel("Force MAE on S-vacancy test set (meV/Å)")
-plt.title("Transfer to an unseen defect")
-plt.tight_layout()
-plt.savefig("results/vacancy_test.png", dpi=200, bbox_inches="tight")
 
 # strain test
 plt.figure(figsize=(5.2, 4))

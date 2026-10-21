@@ -1,9 +1,7 @@
-"""Label every structure with PBE DFT (GPAW, plane waves; settings in dft.py).
+"""Run DFT on every structure in data/structures.xyz.
 
-GPAW runs on one core here, so the structures can be split across several
-processes:  python scripts/02_run_dft.py 0 2  and  python scripts/02_run_dft.py 1 2
-Each process appends its results to data/dft_part<k>.xyz one structure at a time,
-so a run can be stopped and restarted without losing work.
+Can be split across processes: 02_run_dft.py 0 2 and 02_run_dft.py 1 2.
+Results are appended one at a time, so a stopped run picks up where it left off.
 """
 import os
 import sys

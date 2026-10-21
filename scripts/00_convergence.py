@@ -1,9 +1,4 @@
-"""Check that the DFT settings are converged.
-
-One rattled 2x2 MoS2 cell is computed at several plane-wave cutoffs and
-k-point meshes. Each result is compared with the tightest setting
-(600 eV, 6x6x1 k-points). The production settings are 400 eV and 4x4x1.
-"""
+"""Compare the DFT settings (400 eV, 4x4x1 k-points) with tighter ones on a rattled cell."""
 import json
 import numpy as np
 from ase.build import mx2

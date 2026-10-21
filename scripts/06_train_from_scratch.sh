@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
-# Baseline: train a MACE model of similar size from scratch on the same data,
-# to measure how much the pretrained foundation model helps.
+# Baseline: same architecture as MACE-MP-0 small, trained from random weights.
 # Usage: scripts/06_train_from_scratch.sh [model name] [training file]
 set -e
 NAME=${1:-mos2_from_scratch}

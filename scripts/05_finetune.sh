@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Fine-tune the MACE-MP-0 "small" foundation model on the MoS2 DFT data (CPU).
+# Fine-tune MACE-MP-0 small on the MoS2 DFT data.
 # Usage: scripts/05_finetune.sh [model name] [training file]
 set -e
 NAME=${1:-mos2_finetuned}

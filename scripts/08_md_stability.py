@@ -1,9 +1,7 @@
-"""Molecular dynamics stability test with the fine-tuned model.
+"""MD with the fine-tuned model on a 6x6 cell (108 atoms).
 
-Runs a 6x6 MoS2 supercell (108 atoms), much larger than the 12-atom training
-cells: 10 ps at 300 K (Langevin thermostat), then 2 ps without a thermostat
-(NVE) to check energy conservation. The structure is checked by tracking
-the shortest Mo-S distance, which collapses or blows up if the potential fails.
+10 ps at 300 K with a Langevin thermostat, then 2 ps NVE to check energy
+conservation. The shortest Mo-S distance is tracked to catch structural failure.
 """
 import json
 import numpy as np

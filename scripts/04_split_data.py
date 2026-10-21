@@ -1,10 +1,7 @@
-"""Split the labeled data into train / validation / test sets.
+"""Split the pristine data: strain series held out, then 80 train, 10 valid, 20 test.
 
-The biaxial strain series is kept out of training entirely and used later
-as an equation-of-state test. The other 110 structures are shuffled:
-20 for testing, 10 for validation and 80 for training. The first 20 and 40
-training structures are also saved separately for a learning curve, and the
-training set is saved again with the vacancy structures added.
+Also writes the 20 and 40 structure subsets for the learning curve and the
+training set with the vacancy structures added.
 """
 from glob import glob
 import numpy as np
@@ -20,9 +17,7 @@ test = [rest[i] for i in idx[:20]]
 valid = [rest[i] for i in idx[20:30]]
 train = [rest[i] for i in idx[30:]]
 
-# smaller nested training sets for the learning curve
 subsets = [(f"train_{n}", train[:n]) for n in (20, 40)]
-# the training set plus the 26 vacancy structures from 03_vacancy_data.py
 subsets.append(("train_plus_vacancy", train + read("data/vacancy_train.xyz", ":")))
 
 for name, part in [("train", train), ("valid", valid), ("test", test), ("eos", eos)] + subsets:

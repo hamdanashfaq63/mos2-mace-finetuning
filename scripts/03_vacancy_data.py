@@ -1,11 +1,7 @@
-"""Build and label MoS2 structures with a sulfur vacancy.
+"""Build and run DFT on MoS2 cells with one sulfur vacancy.
 
-Sulfur vacancies are the most common point defect in MoS2. The main training
-set has none, so this script makes two separate sets:
-  data/vacancy_test.xyz   12 structures, used only to test transfer to the defect
-  data/vacancy_train.xyz  26 structures, added to training in a second
-                          fine-tuning run to see how much defect data fixes it
-Each set is skipped if its file already exists.
+vacancy_test.xyz:  12 structures, test only
+vacancy_train.xyz: 26 structures, added to training in a second fine-tuning run
 """
 import os
 import numpy as np
