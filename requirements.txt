@@ -1,0 +1,6 @@
+mace-torch==0.3.16
+ase==3.29.0
+gpaw==26.7.0
+torch
+matplotlib
+numpy

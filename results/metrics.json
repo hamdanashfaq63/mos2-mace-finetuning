@@ -1,0 +1,69 @@
+{
+  "DFT (PBE)": {
+    "lattice_constant_A": 3.16772490998072
+  },
+  "MACE-MP-0 zero-shot": {
+    "test_energy_MAE_meV_per_atom": 12.233498037016322,
+    "test_force_MAE_meV_per_A": 212.3271009152844,
+    "test_force_RMSE_meV_per_A": 286.46141585177617,
+    "vacancy_force_MAE_meV_per_A": 383.93320592019387,
+    "lattice_constant_A": 3.1635164508153437,
+    "strain_curve_RMSE_meV_per_atom": 1.5463877499596863
+  },
+  "From scratch (20)": {
+    "test_energy_MAE_meV_per_atom": 3.8356479276898003,
+    "test_force_MAE_meV_per_A": 23.117425840475786,
+    "test_force_RMSE_meV_per_A": 34.59856960652703,
+    "vacancy_force_MAE_meV_per_A": 425.6132262929457,
+    "lattice_constant_A": 3.2026537669078228,
+    "strain_curve_RMSE_meV_per_atom": 21.759576814971233
+  },
+  "From scratch (40)": {
+    "test_energy_MAE_meV_per_atom": 0.46521309836884406,
+    "test_force_MAE_meV_per_A": 14.273006736527964,
+    "test_force_RMSE_meV_per_A": 21.558426293208214,
+    "vacancy_force_MAE_meV_per_A": 310.0509005448239,
+    "lattice_constant_A": 3.171724244520728,
+    "strain_curve_RMSE_meV_per_atom": 1.4060361713976868
+  },
+  "From scratch (80)": {
+    "test_energy_MAE_meV_per_atom": 0.3761374990488786,
+    "test_force_MAE_meV_per_A": 13.16088399423119,
+    "test_force_RMSE_meV_per_A": 18.82194774544536,
+    "vacancy_force_MAE_meV_per_A": 320.21847411541074,
+    "lattice_constant_A": 3.168779321002583,
+    "strain_curve_RMSE_meV_per_atom": 1.5617784917893673
+  },
+  "Fine-tuned (20)": {
+    "test_energy_MAE_meV_per_atom": 5.018625045157332,
+    "test_force_MAE_meV_per_A": 20.123711873001234,
+    "test_force_RMSE_meV_per_A": 28.67698277554741,
+    "vacancy_force_MAE_meV_per_A": 248.635289354268,
+    "lattice_constant_A": 3.2282535658469356,
+    "strain_curve_RMSE_meV_per_atom": 28.83755169089384
+  },
+  "Fine-tuned (40)": {
+    "test_energy_MAE_meV_per_atom": 0.49281453001177583,
+    "test_force_MAE_meV_per_A": 13.63882286636783,
+    "test_force_RMSE_meV_per_A": 19.9186091800265,
+    "vacancy_force_MAE_meV_per_A": 278.54215775771166,
+    "lattice_constant_A": 3.165166967445198,
+    "strain_curve_RMSE_meV_per_atom": 3.0486739762109374
+  },
+  "Fine-tuned (80)": {
+    "test_energy_MAE_meV_per_atom": 0.7754766212347608,
+    "test_force_MAE_meV_per_A": 12.349741900273266,
+    "test_force_RMSE_meV_per_A": 18.78481512658966,
+    "vacancy_force_MAE_meV_per_A": 271.8729539843187,
+    "lattice_constant_A": 3.1650690781024133,
+    "strain_curve_RMSE_meV_per_atom": 4.325169120006781
+  },
+  "Fine-tuned (80) + 26 vacancy": {
+    "test_energy_MAE_meV_per_atom": 0.8497210482735884,
+    "test_force_MAE_meV_per_A": 14.033846156583845,
+    "test_force_RMSE_meV_per_A": 20.05872871882746,
+    "vacancy_force_MAE_meV_per_A": 39.89523944666603,
+    "lattice_constant_A": 3.1644529209981136,
+    "strain_curve_RMSE_meV_per_atom": 5.4461075932032434
+  }
+}

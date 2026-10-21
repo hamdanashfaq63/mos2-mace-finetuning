@@ -1,0 +1,35 @@
+{
+  "reference": "600 eV, 6x6x1",
+  "cutoff_eV (k=6x6x1)": {
+    "300": {
+      "dE_meV_per_atom": 91.57,
+      "max_dF_meV_per_A": 28.0
+    },
+    "400": {
+      "dE_meV_per_atom": 16.27,
+      "max_dF_meV_per_A": 6.98
+    },
+    "500": {
+      "dE_meV_per_atom": 3.54,
+      "max_dF_meV_per_A": 0.38
+    }
+  },
+  "kpoints (600 eV)": {
+    "3x3x1": {
+      "dE_meV_per_atom": 0.39,
+      "max_dF_meV_per_A": 13.42
+    },
+    "4x4x1": {
+      "dE_meV_per_atom": -0.03,
+      "max_dF_meV_per_A": 1.14
+    },
+    "5x5x1": {
+      "dE_meV_per_atom": -0.01,
+      "max_dF_meV_per_A": 0.28
+    }
+  },
+  "production (400 eV, 4x4x1)": {
+    "dE_meV_per_atom": 16.23,
+    "max_dF_meV_per_A": 6.95
+  }
+}

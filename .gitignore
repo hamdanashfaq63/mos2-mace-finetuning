@@ -1,0 +1,5 @@
+scratch/
+results/checkpoints/
+__pycache__/
+*.pt
+models/*_compiled.model
