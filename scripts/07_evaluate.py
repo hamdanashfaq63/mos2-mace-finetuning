@@ -33,6 +33,9 @@ models = {
     "Fine-tuned (70) seed 2": load("models/mos2_finetuned_seed2.model"),
     "Fine-tuned (70) seed 3": load("models/mos2_finetuned_seed3.model"),
     "Fine-tuned (70) + 26 vacancy": load("models/mos2_finetuned_vacancy.model"),
+    "Multi-head (70)": load("models/mos2_multihead.model"),
+    "Multi-head (70) seed 2": load("models/mos2_multihead_seed2.model"),
+    "Multi-head (70) seed 3": load("models/mos2_multihead_seed3.model"),
 }
 
 
@@ -86,7 +89,7 @@ for name, calc in models.items():
     print(name, json.dumps(metrics[name]), flush=True)
 
 # mean and standard deviation over the three seeds at 70 structures
-for label in ("From scratch", "Fine-tuned"):
+for label in ("From scratch", "Fine-tuned", "Multi-head"):
     runs = [metrics[f"{label} (70)"]] + [metrics[f"{label} (70) seed {k}"] for k in (2, 3)]
     metrics[f"{label} (70), 3 seeds"] = {key: {"mean": float(np.mean([r[key] for r in runs])),
                                                "std": float(np.std([r[key] for r in runs]))} for key in runs[0]}
@@ -146,7 +149,7 @@ fig.savefig("results/learning_curve.png", dpi=200, bbox_inches="tight")
 # strain test
 plt.figure(figsize=(5.2, 4))
 plt.plot(a_lat, 1000 * (e_eos - e_eos.min()), "ko", label="DFT (PBE)")
-for name in main:
+for name in main + ["Multi-head (70)"]:
     plt.plot(a_lat, 1000 * (preds[name][1] - preds[name][1].min()), "-", label=name)
 plt.xlabel("In-plane lattice constant (Å)")
 plt.ylabel("Energy relative to minimum (meV/atom)")

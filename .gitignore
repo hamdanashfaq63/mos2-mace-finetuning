@@ -5,3 +5,4 @@ __pycache__/
 models/*_compiled.model
 results/train_logs/*_debug.log
 results/train_logs/*_train.txt
+mp_finetuning-*.xyz
