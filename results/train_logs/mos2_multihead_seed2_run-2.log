@@ -1,0 +1,22 @@
+2026-10-22 15:40:41.081 INFO: ===========VERIFYING SETTINGS===========
+2026-10-22 15:40:41.081 INFO: MACE version: 0.3.16
+2026-10-22 15:40:41.081 INFO: Using CPU
+2026-10-22 15:40:41.154 INFO: Using foundation model mace small as initial checkpoint.
+2026-10-22 15:40:41.247 INFO: Using CPU
+2026-10-22 15:40:41.248 INFO: Using head Default out of  ['Default']
+2026-10-22 15:40:41.248 INFO: Using multiheads finetuning mode, setting learning rate to 0.0001 and EMA to True
+2026-10-22 15:40:41.248 INFO: Using foundation model for multiheads finetuning with Materials Project data
+2026-10-22 15:40:41.248 INFO: ===========LOADING INPUT DATA===========
+2026-10-22 15:40:41.248 INFO: Using heads: ['Default', 'pt_head']
+2026-10-22 15:40:41.248 INFO: Using the key specifications to parse data:
+2026-10-22 15:40:41.248 INFO: Default: KeySpecification(info_keys={'energy': 'REF_energy', 'stress': 'REF_stress', 'virials': 'REF_virials', 'dipole': 'dipole', 'head': 'head', 'elec_temp': 'elec_temp', 'total_charge': 'total_charge', 'polarizability': 'polarizability', 'total_spin': 'total_spin'}, arrays_keys={'forces': 'REF_forces', 'charges': 'REF_charges'})
+2026-10-22 15:40:41.248 INFO: pt_head: KeySpecification(info_keys={'energy': 'energy', 'stress': 'stress', 'virials': 'REF_virials', 'dipole': 'dipole', 'head': 'head', 'elec_temp': 'elec_temp', 'total_charge': 'total_charge', 'polarizability': 'polarizability', 'total_spin': 'total_spin'}, arrays_keys={'forces': 'forces', 'charges': 'REF_charges'})
+2026-10-22 15:40:41.248 INFO: =============    Processing head Default     ===========
+2026-10-22 15:40:41.313 INFO: Training set 1/1 [energy: 70, stress: 0, virials: 0, dipole components: 0, head: 70, elec_temp: 0, total_charge: 0, polarizability: 0, total_spin: 0, forces: 70, charges: 0]
+2026-10-22 15:40:41.314 INFO: Total Training set [energy: 70, stress: 0, virials: 0, dipole components: 0, head: 70, elec_temp: 0, total_charge: 0, polarizability: 0, total_spin: 0, forces: 70, charges: 0]
+2026-10-22 15:40:41.328 INFO: Validation set 1/1 [energy: 10, stress: 0, virials: 0, dipole components: 0, head: 10, elec_temp: 0, total_charge: 0, polarizability: 0, total_spin: 0, forces: 10, charges: 0]
+2026-10-22 15:40:41.328 INFO: Total Validation set [energy: 10, stress: 0, virials: 0, dipole components: 0, head: 10, elec_temp: 0, total_charge: 0, polarizability: 0, total_spin: 0, forces: 10, charges: 0]
+2026-10-22 15:40:41.328 INFO: Total number of configurations: train=70, valid=10, tests=[],
+2026-10-22 15:40:41.328 INFO: =============    Processing head pt_head     ===========
+2026-10-22 15:40:41.328 INFO: Using filtered Materials Project data for replay (61, combinations, random). You can also construct a different subset using `fine_tuning_select.py` script.
+2026-10-22 15:40:41.329 INFO: Reading /root/.cache/mace/mp_traj_combinedxyz
