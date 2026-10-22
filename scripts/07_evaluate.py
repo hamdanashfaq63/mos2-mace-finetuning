@@ -117,21 +117,27 @@ zero = metrics["MACE-MP-0 zero-shot"]
 fig, axes = plt.subplots(1, 2, figsize=(10, 4))
 for ax, key, title in zip(axes, ["test_force_MAE_meV_per_A", "vacancy_force_MAE_meV_per_A"],
                           ["Pristine test set (held-out 600 K run + rattled)", "S-vacancy test set"]):
+    curves = {}
     for label, marker in [("Fine-tuned", "o"), ("From scratch", "s")]:
         y = [metrics[f"{label} ({k})"][key] for k in n[:2]] + [metrics[f"{label} (70), 3 seeds"][key]["mean"]]
         err = [0, 0, metrics[f"{label} (70), 3 seeds"][key]["std"]]
         ax.errorbar(n, y, yerr=err, marker=marker, capsize=4,
                     label=f"{label} MACE" if label == "From scratch" else "Fine-tuned MACE-MP-0")
-        below = label == "Fine-tuned"                  # fine-tuned labels below the points, scratch above
-        fmt = "{:.1f}" if key.startswith("test") else "{:.0f}"
-        for x, v in zip(n, y):
-            ax.annotate(fmt.format(v), (x, v), textcoords="offset points", xytext=(0, -13 if below else 7),
-                        ha="center", fontsize=8)
-    ax.set(xticks=n, xlabel="Training structures", ylabel="Force MAE (meV/Å)", title=title)
+        curves[label] = y
+    # label the higher point above and the lower point below, beside the error bar
+    fmt = "{:.1f}" if key.startswith("test") else "{:.0f}"
+    a, b = curves.values()
+    for i, x in enumerate(n):
+        for v, w in ((a[i], b[i]), (b[i], a[i])):
+            dx, ha = {0: (-8, "right"), 1: (0, "center"), 2: (-10, "right")}[i]
+            dy = (-3 if i == 0 else 7 if v >= w else -13)
+            ax.annotate(fmt.format(v), (x, v), textcoords="offset points", xytext=(dx, dy), ha=ha, fontsize=8)
+    ax.set(xticks=n, xlim=(6, 74), xlabel="Training structures", ylabel="Force MAE (meV/Å)", title=title)
     ax.set_ylim(bottom=0)
-axes[0].text(0.97, 0.95, f"MACE-MP-0 with no fine-tuning: {zero['test_force_MAE_meV_per_A']:.0f} meV/Å (off scale)",
-             transform=axes[0].transAxes, ha="right", va="top", fontsize=8, color="0.35")
+axes[0].text(0.97, 0.35, f"MACE-MP-0 with no fine-tuning: {zero['test_force_MAE_meV_per_A']:.0f} meV/Å (off scale)",
+             transform=axes[0].transAxes, ha="right", va="bottom", fontsize=8, color="0.35")
 axes[1].axhline(zero["vacancy_force_MAE_meV_per_A"], color="0.5", ls="--", label="MACE-MP-0, no fine-tuning")
+axes[1].set_ylim(0, 1.1 * max(axes[1].get_ylim()[1], zero["vacancy_force_MAE_meV_per_A"]))
 axes[0].legend(loc="lower left")
 axes[1].legend(loc="lower left")
 fig.tight_layout()

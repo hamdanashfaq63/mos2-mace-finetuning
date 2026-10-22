@@ -3,67 +3,151 @@
     "lattice_constant_A": 3.16772490998072
   },
   "MACE-MP-0 zero-shot": {
-    "test_energy_MAE_meV_per_atom": 12.233498037016322,
-    "test_force_MAE_meV_per_A": 212.3271009152844,
-    "test_force_RMSE_meV_per_A": 286.46141585177617,
+    "test_energy_MAE_meV_per_atom": 9.654515779737654,
+    "test_force_MAE_meV_per_A": 244.2614652873496,
+    "test_force_RMSE_meV_per_A": 325.14202342395106,
     "vacancy_force_MAE_meV_per_A": 383.93320592019387,
-    "lattice_constant_A": 3.1635164508153437,
+    "lattice_constant_A": 3.1635164508153593,
     "strain_curve_RMSE_meV_per_atom": 1.5463877499596863
   },
   "From scratch (20)": {
-    "test_energy_MAE_meV_per_atom": 3.8356479276898003,
-    "test_force_MAE_meV_per_A": 23.117425840475786,
-    "test_force_RMSE_meV_per_A": 34.59856960652703,
-    "vacancy_force_MAE_meV_per_A": 425.6132262929457,
-    "lattice_constant_A": 3.2026537669078228,
-    "strain_curve_RMSE_meV_per_atom": 21.759576814971233
+    "test_energy_MAE_meV_per_atom": 0.8932942118235291,
+    "test_force_MAE_meV_per_A": 33.273588375278386,
+    "test_force_RMSE_meV_per_A": 47.44758761375406,
+    "vacancy_force_MAE_meV_per_A": 369.3487053838672,
+    "lattice_constant_A": 3.1731973368474184,
+    "strain_curve_RMSE_meV_per_atom": 3.0852109051591774
   },
   "From scratch (40)": {
-    "test_energy_MAE_meV_per_atom": 0.46521309836884406,
-    "test_force_MAE_meV_per_A": 14.273006736527964,
-    "test_force_RMSE_meV_per_A": 21.558426293208214,
-    "vacancy_force_MAE_meV_per_A": 310.0509005448239,
-    "lattice_constant_A": 3.171724244520728,
-    "strain_curve_RMSE_meV_per_atom": 1.4060361713976868
+    "test_energy_MAE_meV_per_atom": 0.7752211686137933,
+    "test_force_MAE_meV_per_A": 26.248111269612522,
+    "test_force_RMSE_meV_per_A": 37.267926139507644,
+    "vacancy_force_MAE_meV_per_A": 321.3333610145415,
+    "lattice_constant_A": 3.1682650258905363,
+    "strain_curve_RMSE_meV_per_atom": 2.5635966954141303
   },
-  "From scratch (80)": {
-    "test_energy_MAE_meV_per_atom": 0.3761374990488786,
-    "test_force_MAE_meV_per_A": 13.16088399423119,
-    "test_force_RMSE_meV_per_A": 18.82194774544536,
-    "vacancy_force_MAE_meV_per_A": 320.21847411541074,
-    "lattice_constant_A": 3.168779321002583,
-    "strain_curve_RMSE_meV_per_atom": 1.5617784917893673
+  "From scratch (70)": {
+    "test_energy_MAE_meV_per_atom": 0.5643345053650309,
+    "test_force_MAE_meV_per_A": 19.95250578880474,
+    "test_force_RMSE_meV_per_A": 28.82750963960675,
+    "vacancy_force_MAE_meV_per_A": 364.96113865637733,
+    "lattice_constant_A": 3.1696155722633286,
+    "strain_curve_RMSE_meV_per_atom": 1.58009431544944
+  },
+  "From scratch (70) seed 2": {
+    "test_energy_MAE_meV_per_atom": 1.2168457580136995,
+    "test_force_MAE_meV_per_A": 22.53059745569495,
+    "test_force_RMSE_meV_per_A": 32.907487823749776,
+    "vacancy_force_MAE_meV_per_A": 195.37872925033312,
+    "lattice_constant_A": 3.1685707016552214,
+    "strain_curve_RMSE_meV_per_atom": 2.49993190429258
+  },
+  "From scratch (70) seed 3": {
+    "test_energy_MAE_meV_per_atom": 1.142438988811841,
+    "test_force_MAE_meV_per_A": 21.07453809162961,
+    "test_force_RMSE_meV_per_A": 30.645950640661678,
+    "vacancy_force_MAE_meV_per_A": 202.3336104351356,
+    "lattice_constant_A": 3.1690387442891375,
+    "strain_curve_RMSE_meV_per_atom": 2.0611609107916395
   },
   "Fine-tuned (20)": {
-    "test_energy_MAE_meV_per_atom": 5.018625045157332,
-    "test_force_MAE_meV_per_A": 20.123711873001234,
-    "test_force_RMSE_meV_per_A": 28.67698277554741,
-    "vacancy_force_MAE_meV_per_A": 248.635289354268,
-    "lattice_constant_A": 3.2282535658469356,
-    "strain_curve_RMSE_meV_per_atom": 28.83755169089384
+    "test_energy_MAE_meV_per_atom": 0.8443991075297734,
+    "test_force_MAE_meV_per_A": 29.72881286385338,
+    "test_force_RMSE_meV_per_A": 44.37487549449301,
+    "vacancy_force_MAE_meV_per_A": 335.5193359451735,
+    "lattice_constant_A": 3.171962080154955,
+    "strain_curve_RMSE_meV_per_atom": 6.208233544556056
   },
   "Fine-tuned (40)": {
-    "test_energy_MAE_meV_per_atom": 0.49281453001177583,
-    "test_force_MAE_meV_per_A": 13.63882286636783,
-    "test_force_RMSE_meV_per_A": 19.9186091800265,
-    "vacancy_force_MAE_meV_per_A": 278.54215775771166,
-    "lattice_constant_A": 3.165166967445198,
-    "strain_curve_RMSE_meV_per_atom": 3.0486739762109374
+    "test_energy_MAE_meV_per_atom": 0.7402500090750349,
+    "test_force_MAE_meV_per_A": 22.312823879561765,
+    "test_force_RMSE_meV_per_A": 34.20200884752581,
+    "vacancy_force_MAE_meV_per_A": 301.7890521417812,
+    "lattice_constant_A": 3.167588642677997,
+    "strain_curve_RMSE_meV_per_atom": 3.86297712421538
   },
-  "Fine-tuned (80)": {
-    "test_energy_MAE_meV_per_atom": 0.7754766212347608,
-    "test_force_MAE_meV_per_A": 12.349741900273266,
-    "test_force_RMSE_meV_per_A": 18.78481512658966,
-    "vacancy_force_MAE_meV_per_A": 271.8729539843187,
-    "lattice_constant_A": 3.1650690781024133,
-    "strain_curve_RMSE_meV_per_atom": 4.325169120006781
+  "Fine-tuned (70)": {
+    "test_energy_MAE_meV_per_atom": 0.7586592094267708,
+    "test_force_MAE_meV_per_A": 19.275318274592845,
+    "test_force_RMSE_meV_per_A": 28.189625725370636,
+    "vacancy_force_MAE_meV_per_A": 310.4674663743387,
+    "lattice_constant_A": 3.165140134901045,
+    "strain_curve_RMSE_meV_per_atom": 5.027540366984355
   },
-  "Fine-tuned (80) + 26 vacancy": {
-    "test_energy_MAE_meV_per_atom": 0.8497210482735884,
-    "test_force_MAE_meV_per_A": 14.033846156583845,
-    "test_force_RMSE_meV_per_A": 20.05872871882746,
-    "vacancy_force_MAE_meV_per_A": 39.89523944666603,
-    "lattice_constant_A": 3.1644529209981136,
-    "strain_curve_RMSE_meV_per_atom": 5.4461075932032434
+  "Fine-tuned (70) seed 2": {
+    "test_energy_MAE_meV_per_atom": 0.8704278269951793,
+    "test_force_MAE_meV_per_A": 19.057170662142898,
+    "test_force_RMSE_meV_per_A": 28.276175424686915,
+    "vacancy_force_MAE_meV_per_A": 289.35689335117866,
+    "lattice_constant_A": 3.1622965531019642,
+    "strain_curve_RMSE_meV_per_atom": 5.043082152340379
+  },
+  "Fine-tuned (70) seed 3": {
+    "test_energy_MAE_meV_per_atom": 0.7799607209122131,
+    "test_force_MAE_meV_per_A": 18.506472026399553,
+    "test_force_RMSE_meV_per_A": 27.242429993426235,
+    "vacancy_force_MAE_meV_per_A": 302.57815590482613,
+    "lattice_constant_A": 3.1636396975798995,
+    "strain_curve_RMSE_meV_per_atom": 4.7192254681096895
+  },
+  "Fine-tuned (70) + 26 vacancy": {
+    "test_energy_MAE_meV_per_atom": 0.6319325126352323,
+    "test_force_MAE_meV_per_A": 20.45832590595236,
+    "test_force_RMSE_meV_per_A": 28.946401804794906,
+    "vacancy_force_MAE_meV_per_A": 39.47979960669326,
+    "lattice_constant_A": 3.1718493067180935,
+    "strain_curve_RMSE_meV_per_atom": 5.925199777418911
+  },
+  "From scratch (70), 3 seeds": {
+    "test_energy_MAE_meV_per_atom": {
+      "mean": 0.9745397507301904,
+      "std": 0.2916451603342467
+    },
+    "test_force_MAE_meV_per_A": {
+      "mean": 21.18588044537643,
+      "std": 1.0554420876345598
+    },
+    "test_force_RMSE_meV_per_A": {
+      "mean": 30.79364936800607,
+      "std": 1.6689151528892696
+    },
+    "vacancy_force_MAE_meV_per_A": {
+      "mean": 254.22449278061535,
+      "std": 78.35409433222199
+    },
+    "lattice_constant_A": {
+      "mean": 3.1690750060692294,
+      "std": 0.0004273365843166593
+    },
+    "strain_curve_RMSE_meV_per_atom": {
+      "mean": 2.0470623768445533,
+      "std": 0.3756544280379538
+    }
+  },
+  "Fine-tuned (70), 3 seeds": {
+    "test_energy_MAE_meV_per_atom": {
+      "mean": 0.8030159191113877,
+      "std": 0.048454188613512084
+    },
+    "test_force_MAE_meV_per_A": {
+      "mean": 18.946320321045096,
+      "std": 0.32351917710428335
+    },
+    "test_force_RMSE_meV_per_A": {
+      "mean": 27.902743714494594,
+      "std": 0.4682473493687518
+    },
+    "vacancy_force_MAE_meV_per_A": {
+      "mean": 300.8008385434478,
+      "std": 8.709505002920112
+    },
+    "lattice_constant_A": {
+      "mean": 3.1636921285276363,
+      "std": 0.001161479262327827
+    },
+    "strain_curve_RMSE_meV_per_atom": {
+      "mean": 4.929949329144807,
+      "std": 0.14913929949362562
+    }
   }
 }
