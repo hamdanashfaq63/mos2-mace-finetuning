@@ -162,7 +162,7 @@ for ax, key, title in zip(axes, ["test_force_MAE_meV_per_A", "vacancy_force_MAE_
             dy = (-3 if i == 0 else 7 if v >= w else -13)
             ax.annotate(fmt.format(v), (x, v), textcoords="offset points", xytext=(dx, dy), ha=ha, fontsize=8)
     ax.set(xticks=n, xlim=(6, 74), xlabel="Training structures", ylabel="Force MAE (meV/Å)", title=title)
-    ax.set_ylim(bottom=0)
+    ax.set_ylim(0, 1.12 * ax.get_ylim()[1])
 axes[0].text(0.97, 0.35, f"MACE-MP-0, no fine-tuning: {zero['test_force_MAE_meV_per_A']:.0f} meV/Å (off scale)",
              transform=axes[0].transAxes, ha="right", va="bottom", fontsize=8, color=GRAY)
 axes[1].axhline(zero["vacancy_force_MAE_meV_per_A"], color=GRAY, ls=":", lw=1.6, label=STYLE[main[0]]["label"])
@@ -180,29 +180,32 @@ ax.legend()
 fig.tight_layout()
 fig.savefig("results/strain_test.png", dpi=200, bbox_inches="tight")
 
-# fine-tuning strategies: strain curves (left) and force error against strain curve error (right)
+# fine-tuning strategies: strain curves (left), force error and strain curve error (bars)
 strategies = ["Fine-tuned (70)", "Multi-head (70)", "Fine-tuned (70), lr 1e-4", "Multi-head (70), lr 1e-4"]
 label = lambda name: f"{STYLE[name]['label']}, {LR[name[len(name.split(',')[0]):]]}"
-fig, axes = plt.subplots(1, 2, figsize=(11, 4.2))
+fig, axes = plt.subplots(1, 3, figsize=(15, 4.2), gridspec_kw={"width_ratios": [1.3, 1, 1]})
 strain_curve(axes[0], [main[0]] + strategies, [STYLE[main[0]]["label"]] + [label(nm) for nm in strategies])
 axes[0].set_title("Held-out biaxial strain test (seed 1 models)")
 axes[0].legend(loc="upper center")
-for name in strategies:
-    m = metrics.get(name + ", 3 seeds", metrics[name])
-    get = lambda k: (m[k]["mean"], m[k]["std"]) if isinstance(m[k], dict) else (m[k], 0)
-    (x, dx), (y, dy) = get("strain_curve_RMSE_meV_per_atom"), get("test_force_MAE_meV_per_A")
-    seeds = "3 seeds" if dx else "1 seed"
-    filled = STYLE[name]["ls"] == "-"
-    axes[1].errorbar(x, y, xerr=dx, yerr=dy, fmt="o" if filled else "s", ms=7, capsize=3, color=STYLE[name]["color"],
-                     mfc=STYLE[name]["color"] if filled else "white", mew=1.6, label=f"{label(name)} ({seeds})")
-zx = zero["strain_curve_RMSE_meV_per_atom"]
-axes[1].axvline(zx, color=GRAY, ls=":", lw=1.6)
-axes[1].text(zx + 0.08, 0.97, f"MACE-MP-0, no fine-tuning\n(force MAE {zero['test_force_MAE_meV_per_A']:.0f} meV/Å, off scale)",
-             transform=axes[1].get_xaxis_transform(), fontsize=8, va="top", color=GRAY)
-axes[1].annotate("better", xy=(0.03, 0.05), xytext=(0.14, 0.2), xycoords="axes fraction", fontsize=8, color=GRAY,
-                 ha="center", arrowprops=dict(arrowstyle="->", color=GRAY))
-axes[1].set(xlabel="Strain curve RMSE (meV/atom)", ylabel="Test force MAE (meV/Å)",
-            xlim=(0, 6.8), ylim=(0, 48), title="Force error against strain curve error")
-axes[1].legend(loc="lower right")
-fig.tight_layout()
+ticks = [f"{STYLE[nm]['label']}\n{LR[nm[len(nm.split(',')[0]):]]}" for nm in strategies]
+for ax, key, title, fmt in [(axes[1], "test_force_MAE_meV_per_A", "Test force MAE (meV/Å)", "{:.1f}"),
+                            (axes[2], "strain_curve_RMSE_meV_per_atom", "Strain curve RMSE (meV/atom)", "{:.1f}")]:
+    for i, name in enumerate(strategies):
+        m = metrics.get(name + ", 3 seeds", metrics[name])
+        y, dy = (m[key]["mean"], m[key]["std"]) if isinstance(m[key], dict) else (m[key], 0)
+        solid = STYLE[name]["ls"] == "-"
+        ax.bar(i, y, width=0.65, color=STYLE[name]["color"] if solid else "white", edgecolor=STYLE[name]["color"],
+               hatch=None if solid else "///", lw=1.6, yerr=dy or None, capsize=4)
+        ax.text(i, y + dy + 0.02 * ax.get_ylim()[1], fmt.format(y), ha="center", va="bottom", fontsize=8)
+    ax.set(xticks=range(4), title=title)
+    ax.set_xticklabels(ticks, fontsize=8)
+    ax.set_ylim(0, 1.2 * ax.get_ylim()[1])
+    ax.spines[["top", "right"]].set_visible(False)
+z = zero["strain_curve_RMSE_meV_per_atom"]
+axes[2].axhline(z, color=GRAY, ls=":", lw=1.6, label=f"MACE-MP-0, no fine-tuning ({z:.1f})")
+axes[2].legend(loc="upper left", frameon=False)
+axes[1].text(0.98, 0.97, f"MACE-MP-0, no fine-tuning: {zero['test_force_MAE_meV_per_A']:.0f} (off scale)",
+             transform=axes[1].transAxes, color=GRAY, fontsize=8, ha="right", va="top")
+fig.text(0.99, 0.01, "Solid bars: mean and std over 3 seeds. Hatched bars: 1 seed.", ha="right", fontsize=8, color=GRAY)
+fig.tight_layout(rect=(0, 0.03, 1, 1))
 fig.savefig("results/finetuning_strategies.png", dpi=200, bbox_inches="tight")

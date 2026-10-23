@@ -69,8 +69,8 @@ Multi-head fine-tuning keeps training on part of the foundation model's data whi
 | Fine-tuning | Learning rate | Force MAE (meV/Å) | Strain curve RMSE (meV/atom) | Vacancy force MAE (meV/Å) |
 |---|---:|---:|---:|---:|
 | None | | 244.3 | 1.5 | 384 |
-| Fine-tuned | 5 × 10⁻³ | 18.9 ± 0.3 | 4.9 ± 0.2 | 301 ± 9 |
-| Multi-head | 5 × 10⁻³ | 19.8 ± 0.1 | 5.4 ± 0.4 | 309 ± 8 |
+| Fine-tuned | 5 × 10⁻³ | 18.9 ± 0.3 | 4.9 ± 0.1 | 301 ± 9 |
+| Multi-head | 5 × 10⁻³ | 19.8 ± 0.1 | 5.3 ± 0.4 | 309 ± 8 |
 | Fine-tuned | 10⁻⁴ | 39.0 | 5.9 | 287 |
 | Multi-head | 10⁻⁴ | 32.5 | 3.5 | 271 |
 
