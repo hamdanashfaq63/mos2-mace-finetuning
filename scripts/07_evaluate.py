@@ -36,6 +36,8 @@ models = {
     "Multi-head (70)": load("models/mos2_multihead.model"),
     "Multi-head (70) seed 2": load("models/mos2_multihead_seed2.model"),
     "Multi-head (70) seed 3": load("models/mos2_multihead_seed3.model"),
+    "Fine-tuned (70), lr 1e-4": load("models/mos2_finetuned_lr1e-4.model"),
+    "Multi-head (70), lr 1e-4": load("models/mos2_multihead_lr1e-4.model"),
 }
 
 
@@ -149,7 +151,7 @@ fig.savefig("results/learning_curve.png", dpi=200, bbox_inches="tight")
 # strain test
 plt.figure(figsize=(5.2, 4))
 plt.plot(a_lat, 1000 * (e_eos - e_eos.min()), "ko", label="DFT (PBE)")
-for name in main + ["Multi-head (70)"]:
+for name in main:
     plt.plot(a_lat, 1000 * (preds[name][1] - preds[name][1].min()), "-", label=name)
 plt.xlabel("In-plane lattice constant (Å)")
 plt.ylabel("Energy relative to minimum (meV/atom)")
@@ -157,3 +159,28 @@ plt.title("Held-out biaxial strain test")
 plt.legend()
 plt.tight_layout()
 plt.savefig("results/strain_test.png", dpi=200, bbox_inches="tight")
+
+# fine-tuning strategies: strain curves (left) and force error against strain-curve error (right)
+strategies = {"Naive, lr 5e-3": "Fine-tuned (70)", "Multi-head, lr 5e-3": "Multi-head (70)",
+              "Naive, lr 1e-4": "Fine-tuned (70), lr 1e-4", "Multi-head, lr 1e-4": "Multi-head (70), lr 1e-4"}
+fig, axes = plt.subplots(1, 2, figsize=(10.5, 4))
+axes[0].plot(a_lat, 1000 * (e_eos - e_eos.min()), "ko", label="DFT (PBE)")
+axes[0].plot(a_lat, 1000 * (preds[main[0]][1] - preds[main[0]][1].min()), "k:", label="No fine-tuning")
+for label, name in strategies.items():
+    axes[0].plot(a_lat, 1000 * (preds[name][1] - preds[name][1].min()), "-", label=label)
+axes[0].set(xlabel="In-plane lattice constant (Å)", ylabel="Energy relative to minimum (meV/atom)",
+            title="Held-out biaxial strain test")
+axes[0].legend(fontsize=8)
+for (label, name), color in zip(strategies.items(), ["C0", "C1", "C2", "C3"]):
+    m = metrics[name + ", 3 seeds"] if name + ", 3 seeds" in metrics else metrics[name]
+    get = lambda k: (m[k]["mean"], m[k]["std"]) if isinstance(m[k], dict) else (m[k], 0)
+    (x, dx), (y, dy) = get("strain_curve_RMSE_meV_per_atom"), get("test_force_MAE_meV_per_A")
+    axes[1].errorbar(x, y, xerr=dx, yerr=dy, fmt="o", color=color, capsize=3, label=label)
+zx = metrics[main[0]]["strain_curve_RMSE_meV_per_atom"]
+axes[1].axvline(zx, color="k", ls=":", lw=1)
+axes[1].text(zx, 0.97, " no fine-tuning", transform=axes[1].get_xaxis_transform(), fontsize=8, va="top")
+axes[1].set(xlabel="Strain curve RMSE (meV/atom)", ylabel="Test force MAE (meV/Å)", xlim=(0, None), ylim=(0, None),
+            title="Force accuracy against strain accuracy")
+axes[1].legend(fontsize=8, loc="lower right")
+fig.tight_layout()
+fig.savefig("results/finetuning_strategies.png", dpi=200, bbox_inches="tight")
