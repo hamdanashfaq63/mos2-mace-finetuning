@@ -3,11 +3,12 @@
 # on the 61 Materials Project structures that contain only Mo and S (replay data),
 # so the shared weights are pulled toward what MACE-MP-0 learned from them.
 # Multi-head mode needs the foundation model's atomic reference energies (E0s).
-# Usage: scripts/09_multihead_finetune.sh [model name] [training file] [seed]
+# Usage: scripts/09_multihead_finetune.sh [model name] [training file] [seed] [learning rate]
 set -e
 NAME=${1:-mos2_multihead}
 TRAIN=${2:-data/train.xyz}
 SEED=${3:-1}
+LR=${4:-0.005}
 mace_run_train \
   --name "$NAME" \
   --foundation_model small \
@@ -24,7 +25,7 @@ mace_run_train \
   --loss ef \
   --energy_weight 1.0 \
   --forces_weight 100.0 \
-  --lr 0.005 \
+  --lr "$LR" \
   --batch_size 4 \
   --max_num_epochs 150 \
   --ema --ema_decay 0.99 \
