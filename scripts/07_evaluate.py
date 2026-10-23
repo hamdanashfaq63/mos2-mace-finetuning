@@ -98,36 +98,60 @@ for label in ("From scratch", "Fine-tuned", "Multi-head"):
 
 json.dump(metrics, open("results/metrics.json", "w"), indent=2)
 
+# one name, color and line style per model in every figure (colorblind-safe palette)
+GRAY, BLUE, RED, GREEN = "0.45", "#0072B2", "#D55E00", "#009E73"
+STYLE = {
+    "MACE-MP-0 zero-shot": dict(label="MACE-MP-0, no fine-tuning", color=GRAY, ls=":"),
+    "From scratch (70)": dict(label="From scratch", color=RED, ls="-"),
+    "Fine-tuned (70)": dict(label="Fine-tuned", color=BLUE, ls="-"),
+    "Multi-head (70)": dict(label="Multi-head", color=GREEN, ls="-"),
+    "Fine-tuned (70), lr 1e-4": dict(label="Fine-tuned", color=BLUE, ls="--"),
+    "Multi-head (70), lr 1e-4": dict(label="Multi-head", color=GREEN, ls="--"),
+}
+LR = {"": r"lr $5\times10^{-3}$", ", lr 1e-4": r"lr $10^{-4}$"}
+plt.rcParams.update({"font.size": 9, "axes.titlesize": 10, "legend.fontsize": 8})
+
+
+def strain_curve(ax, names, labels=None):
+    ax.plot(a_lat, 1000 * (e_eos - e_eos.min()), "ko", ms=5, label="DFT (PBE)", zorder=3)
+    for i, name in enumerate(names):
+        st = STYLE[name]
+        ax.plot(a_lat, 1000 * (preds[name][1] - preds[name][1].min()), color=st["color"], ls=st["ls"], lw=1.6,
+                label=labels[i] if labels else st["label"])
+    ax.set(xlabel="In-plane lattice constant (Å)", ylabel="Energy relative to minimum (meV/atom)")
+
+
 # force parity for the three main models, plus the distribution of their errors
 main = ["MACE-MP-0 zero-shot", "From scratch (70)", "Fine-tuned (70)"]
 fig, axes = plt.subplots(1, 4, figsize=(17, 4.4))
 lim = 1.05 * np.abs(f_test).max()
 for ax, name in zip(axes, main):
-    ax.scatter(f_test.ravel(), preds[name][0].ravel(), s=5, alpha=0.4)
+    ax.scatter(f_test.ravel(), preds[name][0].ravel(), s=5, alpha=0.4, color=STYLE[name]["color"])
     ax.plot([-lim, lim], [-lim, lim], "k--", lw=1)
     ax.set(xlim=(-lim, lim), ylim=(-lim, lim), xlabel="DFT force (eV/Å)", ylabel="Model force (eV/Å)",
-           title=f"{name}\nforce MAE = {metrics[name]['test_force_MAE_meV_per_A']:.0f} meV/Å")
+           title=f"{STYLE[name]['label']}\nforce MAE = {metrics[name]['test_force_MAE_meV_per_A']:.0f} meV/Å")
     ax.set_aspect("equal")
 bins = np.logspace(-1, 3.5, 30)
 for name in main:
-    axes[3].hist(1000 * np.abs(preds[name][0] - f_test).ravel(), bins=bins, histtype="step", lw=1.5, label=name)
+    axes[3].hist(1000 * np.abs(preds[name][0] - f_test).ravel(), bins=bins, histtype="step", lw=1.6,
+                 color=STYLE[name]["color"], label=STYLE[name]["label"])
 axes[3].set(xscale="log", xlabel="|Force error| (meV/Å)", ylabel="Force components", title="Error distribution")
-axes[3].legend(fontsize=8)
+axes[3].set_ylim(0, 1.4 * axes[3].get_ylim()[1])                 # room for the legend above the bars
+axes[3].legend(loc="upper left")
 fig.tight_layout()
 fig.savefig("results/force_parity.png", dpi=200, bbox_inches="tight")
 
-# learning curve: test set (left) and unseen S-vacancy set (right)
+# learning curve: test set (left) and unseen S-vacancy set (right), mean and std over 3 seeds at 70
 n = [20, 40, 70]
 zero = metrics["MACE-MP-0 zero-shot"]
 fig, axes = plt.subplots(1, 2, figsize=(10, 4))
 for ax, key, title in zip(axes, ["test_force_MAE_meV_per_A", "vacancy_force_MAE_meV_per_A"],
                           ["Pristine test set (held-out 600 K run + rattled)", "S-vacancy test set"]):
     curves = {}
-    for label, marker in [("Fine-tuned", "o"), ("From scratch", "s")]:
+    for label, marker, name in [("Fine-tuned", "o", "Fine-tuned (70)"), ("From scratch", "s", "From scratch (70)")]:
         y = [metrics[f"{label} ({k})"][key] for k in n[:2]] + [metrics[f"{label} (70), 3 seeds"][key]["mean"]]
         err = [0, 0, metrics[f"{label} (70), 3 seeds"][key]["std"]]
-        ax.errorbar(n, y, yerr=err, marker=marker, capsize=4,
-                    label=f"{label} MACE" if label == "From scratch" else "Fine-tuned MACE-MP-0")
+        ax.errorbar(n, y, yerr=err, marker=marker, capsize=4, color=STYLE[name]["color"], lw=1.6, label=label)
         curves[label] = y
     # label the higher point above and the lower point below, beside the error bar
     fmt = "{:.1f}" if key.startswith("test") else "{:.0f}"
@@ -139,9 +163,9 @@ for ax, key, title in zip(axes, ["test_force_MAE_meV_per_A", "vacancy_force_MAE_
             ax.annotate(fmt.format(v), (x, v), textcoords="offset points", xytext=(dx, dy), ha=ha, fontsize=8)
     ax.set(xticks=n, xlim=(6, 74), xlabel="Training structures", ylabel="Force MAE (meV/Å)", title=title)
     ax.set_ylim(bottom=0)
-axes[0].text(0.97, 0.35, f"MACE-MP-0 with no fine-tuning: {zero['test_force_MAE_meV_per_A']:.0f} meV/Å (off scale)",
-             transform=axes[0].transAxes, ha="right", va="bottom", fontsize=8, color="0.35")
-axes[1].axhline(zero["vacancy_force_MAE_meV_per_A"], color="0.5", ls="--", label="MACE-MP-0, no fine-tuning")
+axes[0].text(0.97, 0.35, f"MACE-MP-0, no fine-tuning: {zero['test_force_MAE_meV_per_A']:.0f} meV/Å (off scale)",
+             transform=axes[0].transAxes, ha="right", va="bottom", fontsize=8, color=GRAY)
+axes[1].axhline(zero["vacancy_force_MAE_meV_per_A"], color=GRAY, ls=":", lw=1.6, label=STYLE[main[0]]["label"])
 axes[1].set_ylim(0, 1.1 * max(axes[1].get_ylim()[1], zero["vacancy_force_MAE_meV_per_A"]))
 axes[0].legend(loc="lower left")
 axes[1].legend(loc="lower left")
@@ -149,38 +173,36 @@ fig.tight_layout()
 fig.savefig("results/learning_curve.png", dpi=200, bbox_inches="tight")
 
 # strain test
-plt.figure(figsize=(5.2, 4))
-plt.plot(a_lat, 1000 * (e_eos - e_eos.min()), "ko", label="DFT (PBE)")
-for name in main:
-    plt.plot(a_lat, 1000 * (preds[name][1] - preds[name][1].min()), "-", label=name)
-plt.xlabel("In-plane lattice constant (Å)")
-plt.ylabel("Energy relative to minimum (meV/atom)")
-plt.title("Held-out biaxial strain test")
-plt.legend()
-plt.tight_layout()
-plt.savefig("results/strain_test.png", dpi=200, bbox_inches="tight")
+fig, ax = plt.subplots(figsize=(5.2, 4))
+strain_curve(ax, main)
+ax.set_title("Held-out biaxial strain test (seed 1 models)")
+ax.legend()
+fig.tight_layout()
+fig.savefig("results/strain_test.png", dpi=200, bbox_inches="tight")
 
-# fine-tuning strategies: strain curves (left) and force error against strain-curve error (right)
-strategies = {"Naive, lr 5e-3": "Fine-tuned (70)", "Multi-head, lr 5e-3": "Multi-head (70)",
-              "Naive, lr 1e-4": "Fine-tuned (70), lr 1e-4", "Multi-head, lr 1e-4": "Multi-head (70), lr 1e-4"}
-fig, axes = plt.subplots(1, 2, figsize=(10.5, 4))
-axes[0].plot(a_lat, 1000 * (e_eos - e_eos.min()), "ko", label="DFT (PBE)")
-axes[0].plot(a_lat, 1000 * (preds[main[0]][1] - preds[main[0]][1].min()), "k:", label="No fine-tuning")
-for label, name in strategies.items():
-    axes[0].plot(a_lat, 1000 * (preds[name][1] - preds[name][1].min()), "-", label=label)
-axes[0].set(xlabel="In-plane lattice constant (Å)", ylabel="Energy relative to minimum (meV/atom)",
-            title="Held-out biaxial strain test")
-axes[0].legend(fontsize=8)
-for (label, name), color in zip(strategies.items(), ["C0", "C1", "C2", "C3"]):
-    m = metrics[name + ", 3 seeds"] if name + ", 3 seeds" in metrics else metrics[name]
+# fine-tuning strategies: strain curves (left) and force error against strain curve error (right)
+strategies = ["Fine-tuned (70)", "Multi-head (70)", "Fine-tuned (70), lr 1e-4", "Multi-head (70), lr 1e-4"]
+label = lambda name: f"{STYLE[name]['label']}, {LR[name[len(name.split(',')[0]):]]}"
+fig, axes = plt.subplots(1, 2, figsize=(11, 4.2))
+strain_curve(axes[0], [main[0]] + strategies, [STYLE[main[0]]["label"]] + [label(nm) for nm in strategies])
+axes[0].set_title("Held-out biaxial strain test (seed 1 models)")
+axes[0].legend(loc="upper center")
+for name in strategies:
+    m = metrics.get(name + ", 3 seeds", metrics[name])
     get = lambda k: (m[k]["mean"], m[k]["std"]) if isinstance(m[k], dict) else (m[k], 0)
     (x, dx), (y, dy) = get("strain_curve_RMSE_meV_per_atom"), get("test_force_MAE_meV_per_A")
-    axes[1].errorbar(x, y, xerr=dx, yerr=dy, fmt="o", color=color, capsize=3, label=label)
-zx = metrics[main[0]]["strain_curve_RMSE_meV_per_atom"]
-axes[1].axvline(zx, color="k", ls=":", lw=1)
-axes[1].text(zx, 0.97, " no fine-tuning", transform=axes[1].get_xaxis_transform(), fontsize=8, va="top")
-axes[1].set(xlabel="Strain curve RMSE (meV/atom)", ylabel="Test force MAE (meV/Å)", xlim=(0, None), ylim=(0, None),
-            title="Force accuracy against strain accuracy")
-axes[1].legend(fontsize=8, loc="lower right")
+    seeds = "3 seeds" if dx else "1 seed"
+    filled = STYLE[name]["ls"] == "-"
+    axes[1].errorbar(x, y, xerr=dx, yerr=dy, fmt="o" if filled else "s", ms=7, capsize=3, color=STYLE[name]["color"],
+                     mfc=STYLE[name]["color"] if filled else "white", mew=1.6, label=f"{label(name)} ({seeds})")
+zx = zero["strain_curve_RMSE_meV_per_atom"]
+axes[1].axvline(zx, color=GRAY, ls=":", lw=1.6)
+axes[1].text(zx + 0.08, 0.97, f"MACE-MP-0, no fine-tuning\n(force MAE {zero['test_force_MAE_meV_per_A']:.0f} meV/Å, off scale)",
+             transform=axes[1].get_xaxis_transform(), fontsize=8, va="top", color=GRAY)
+axes[1].annotate("better", xy=(0.03, 0.05), xytext=(0.14, 0.2), xycoords="axes fraction", fontsize=8, color=GRAY,
+                 ha="center", arrowprops=dict(arrowstyle="->", color=GRAY))
+axes[1].set(xlabel="Strain curve RMSE (meV/atom)", ylabel="Test force MAE (meV/Å)",
+            xlim=(0, 6.8), ylim=(0, 48), title="Force error against strain curve error")
+axes[1].legend(loc="lower right")
 fig.tight_layout()
 fig.savefig("results/finetuning_strategies.png", dpi=200, bbox_inches="tight")
